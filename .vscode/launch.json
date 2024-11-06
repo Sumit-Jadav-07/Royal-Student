@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-RoyalStudentApplication<RoyalStudent>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.RoyalStudentApplication",
+      "projectName": "RoyalStudent",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}
