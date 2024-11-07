@@ -2,7 +2,7 @@ import React from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import RoyalLogo from "../../assets/images/logo_white-1.png";
 
-const Navbar = ({ onSearch, searchResults, onStudentSelect, showDropdown }) => {
+const Navbar = ({ onSearch, searchResults, onStudentSelect, showDropdown, onAddStudentClick }) => {
   return (
     <div className="h-[10%] flex items-center justify-between bg-[#00b4d8]">
       <div className="pl-10">
@@ -41,7 +41,7 @@ const Navbar = ({ onSearch, searchResults, onStudentSelect, showDropdown }) => {
       </div>
 
       <div className="pr-10">
-        <button className="bg-[#caf0f8] p-2 rounded-full text-[15px] pl-7 pr-7 text-black">
+        <button onClick={onAddStudentClick} className="bg-[#caf0f8] p-2 rounded-full text-[15px] pl-7 pr-7 text-black">
           Add Student
         </button>
       </div>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Navbar from "../components/student/Navbar";
 import StudentDetails from "../components/student/StudentDetails";
+import AddStudent from "../components/student/AddStudent";
 
 function Student() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -9,6 +10,7 @@ function Student() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showDropdown, setShowDropdown] = useState(false); // Manage dropdown visibility
+  const [showAddStudentModal, setShowAddStudentModal] = useState(false);
 
   const fetchSearchResults = async (query) => {
     if (!query) {
@@ -77,6 +79,10 @@ function Student() {
     fetchStudentDetails(studentId);
   };
 
+  const toggleAddStudentModal = () => {
+    setShowAddStudentModal(!showAddStudentModal); // Toggle modal visibility
+  };
+
   return (
     <div className="font-metropolis flex flex-col h-screen w-full bg-[#90e0ef]">
       <Navbar
@@ -84,8 +90,15 @@ function Student() {
         searchResults={searchResults}
         onStudentSelect={handleStudentSelect}
         showDropdown={showDropdown} // Pass the state to Navbar
+        onAddStudentClick={toggleAddStudentModal}
       />
       <StudentDetails student={selectedStudent} />
+
+      {showAddStudentModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <AddStudent onClosed={() => setShowAddStudentModal(false)} />
+        </div>
+      )}
     </div>
   );
 }

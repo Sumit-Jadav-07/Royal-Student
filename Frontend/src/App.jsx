@@ -1,11 +1,10 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './App.css'
-import Login from './components/common/Login';
-import Home from './pages/Home';
-import Student from './pages/Student';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "./App.css";
+import Home from "./pages/Home";
+import Student from "./pages/Student";
+import AddStudent from "./components/student/AddStudent";
 
 function App() {
-
   return (
     <Router>
       <Routes>
@@ -13,7 +12,7 @@ function App() {
         <Route path="/student" element={<Student />} />
       </Routes>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;
