@@ -84,7 +84,7 @@ function Student() {
   };
 
   return (
-    <div className="font-metropolis flex flex-col h-screen w-full bg-[#90e0ef]">
+    <div className="font-metropolis flex flex-col lg:h-screen md:h-[100%] overflow-hidden w-full bg-[#90e0ef]">
       <Navbar
         onSearch={handleSearch}
         searchResults={searchResults}
