@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import Home from "./pages/Home";
 import Student from "./pages/Student";
-import AddStudent from "./components/student/AddStudent";
 
 function App() {
   return (
