@@ -16,12 +16,26 @@ const StudentDetails = ({ student }) => {
     finalScore: "",
     discipline: 5,
     testPerformance: 4,
-    communication: 4, // Added for the new criteria
-    regularity: 3, // Added for the new criteria
+    communication: 4,
+    regularity: 3,
   };
 
   // Use default data if no student data is provided
   const currentStudent = student || defaultStudent;
+
+  // Calculate the total score and final score percentage
+  const totalScore =
+    parseInt(currentStudent.discipline) +
+    parseInt(currentStudent.testPerformance) +
+    parseInt(currentStudent.communication) +
+    parseInt(currentStudent.regularity);
+
+  const finalScorePercentage = (totalScore / 20) * 100;
+
+  currentStudent.finalScore = finalScorePercentage;
+
+  console.log(currentStudent.finalScore);
+  
 
   const progressData = [
     {
@@ -137,10 +151,10 @@ const StudentDetails = ({ student }) => {
         <div className="w-full bg-white rounded-md flex flex-col justify-between items-center p-4 lg:col-span-2 md:col-span-1 max-sm:col-span-3 sm:col-span-3">
           <h3>Final Score</h3>
           <div className="h-[180px] w-[180px]">
-            <PieChart />
+            <PieChart finalScore={currentStudent.finalScore}/>
           </div>
           <p className="text-xl font-bold mt-2">
-            {currentStudent.finalScore || "N/A"}
+            {currentStudent.finalScore || "N/A"}&#x25;
           </p>
         </div>
 

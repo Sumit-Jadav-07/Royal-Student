@@ -52,6 +52,7 @@ function Login() {
 
     const emailError = validateEmail(email);
     const passwordError = validatePassword(password);
+    
     setErrors({ email: emailError, password: passwordError });
 
     if (!emailError && !passwordError) {

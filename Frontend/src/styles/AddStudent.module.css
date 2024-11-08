@@ -47,3 +47,18 @@
 .bg-blur-active {
   backdrop-filter: blur(10px); /* Add blur when modal is open */
 }
+
+/* Hide the scrollbar */
+.scrollcontainer {
+  overflow-y: auto; /* Enables vertical scrolling */
+  max-height: 90vh; /* Adjust based on your layout */
+}
+
+.scrollcontainer::-webkit-scrollbar {
+  display: none; /* Hides scrollbar in WebKit browsers */
+}
+
+.scrollcontainer {
+  -ms-overflow-style: none; /* Hides scrollbar in Internet Explorer */
+  scrollbar-width: none; /* Hides scrollbar in Firefox */
+}

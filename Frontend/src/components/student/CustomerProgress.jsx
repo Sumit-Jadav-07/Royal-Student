@@ -1,6 +1,7 @@
 import React from "react";
 
 const CustomProgress = ({ value, color, size }) => {
+  
   // Set default values for props if not provided
   const progressValue = value || 0;
   const progressColor = color || "#00c6ff";

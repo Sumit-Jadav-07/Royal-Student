@@ -22,26 +22,26 @@ export default function SimpleBarChart({uData}) {
           {
             data: uData,
             id: 'uvId',
-            color: '#00c6ff', // Change the color of the bars here
+            color: '#00c6ff', 
           },
         ]}
         xAxis={[
           {
             data: xLabels,
             scaleType: 'band',
-            labelOffset: 0, // Reduce the label offset
+            labelOffset: 0, 
           },
         ]}
         yAxis={[
           {
             data: yLabels,
             scaleType: 'linear',
-            labelOffset: 0, // Reduce the label offset
+            labelOffset: 0, 
           },
         ]}
         style={{
-          padding: 0,  // Ensure there is no internal padding
-          margin: 0,   // Ensure no margin
+          padding: 0,  
+          margin: 0,  
         }}
       />
     </div>
