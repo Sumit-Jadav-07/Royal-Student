@@ -97,7 +97,7 @@ function Student() {
   };
 
   return (
-    <div className="font-metropolis flex flex-col lg:h-screen md:h-[100%] overflow-hidden w-full bg-[#90e0ef] relative">
+    <div className="font-metropolis flex flex-col lg:h-screen md:h-[100%] overflow-hidden w-full bg-[#90e0ef] relative scrollbar-hidden">
       <Navbar
         onSearch={handleSearch}
         searchResults={searchResults}

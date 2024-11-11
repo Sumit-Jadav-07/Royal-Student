@@ -120,7 +120,7 @@ function Signup({ setLoading }) {
 
   return (
     <div className="relative font-metropolis h-auto w-[475px] bg-white p-7 flex flex-col rounded-md shadow-lg shadow-indigo-500/40">
-      
+
       <Message
         message={message}
         isError={isError}

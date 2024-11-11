@@ -11,8 +11,8 @@ const Navbar = ({
 }) => {
   return (
     <>
-      <div className="h-auto flex items-center justify-between bg-[#00b4d8] p-3 transition-all duration-150 ease-linear">
-        <div className="pl-10 w-44">
+      <div className="h-auto flex items-center justify-between bg-[#00b4d8] p-3 transition-all duration-150 ease-linear scrollbar-hidden">
+        <div className="pl-10 w-44 md:w-34 md:mr-4 ">
           <img src={RoyalLogo} alt="Logo" className="h-12 cursor-pointer" />
         </div>
 
@@ -47,18 +47,22 @@ const Navbar = ({
           )}
         </div>
 
-        <div className="md:pr-10 ">
+        <div className="flex justify-between gap-3 md:pr-5  ">
           <button
             onClick={onAddStudentClick}
-            className="bg-[#caf0f8] p-2 rounded-full text-[15px] pl-7 pr-7 text-black"
+            className="bg-[#caf0f8] p-2 rounded-full text-[15px] pl-7 pr-7 text-black font-bold max-md:hidden"
           >
             Add Student
+          </button>
+
+          <button className="bg-[#caf0f8] p-2 rounded-full text-[15px] pl-7 pr-7 text-black font-bold ">
+            Logout
           </button>
         </div>
       </div>
 
-      <div className="relative flex items-center w-full mt-3 md:hidden">
-        <div className="flex items-center w-full max-w-md mx-auto bg-white border border-gray-300 rounded-full shadow-sm">
+      <div className="relative flex items-center w-full mt-3 md:hidden pl-5 pr-5 pt-3 pb-3 gap-3">
+        <div className="flex items-center w-full mx-auto bg-white border border-gray-300 rounded-full shadow-sm">
           <div className="p-2">
             <MagnifyingGlassIcon className="w-5 h-5 text-gray-500" />
           </div>
@@ -86,6 +90,13 @@ const Navbar = ({
             </ul>
           </div>
         )}
+
+        <button
+          onClick={onAddStudentClick}
+          className="bg-[#caf0f8] p-2 w-[179px] rounded-full text-[15px] pl-5 pr-5 text-black font-bold"
+        >
+          Add Student
+        </button>
       </div>
     </>
   );

@@ -113,31 +113,30 @@ public class SessionController {
         session.setAttribute("otp", otp);
         System.out.println(otp);
         response.put("message", "OTP sent successfully");
+        response.put("otp",otp);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/forgotpassword")
-    public ResponseEntity<String> forgotPassword(@RequestBody LoginRequest loginRequest, HttpSession session) {
+    public ResponseEntity<?> forgotPassword(@RequestBody LoginRequest loginRequest, HttpSession session) {
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();
         String otp = loginRequest.getOtp();
         String storedOtp = (String) session.getAttribute("otp");
-
+        HashMap<String, Object> response = new HashMap<>();
+        System.out.println("Stored Otp " + storedOtp);
         Object admin = adminService.authenticateAdmin(email);
 
         if (admin == null) {
-            return ResponseEntity.ok("Email not found");
-        }
-
-        if (storedOtp == null || !storedOtp.equals(otp)) {
-            return ResponseEntity.ok("Invalid OTP. Please request a new one");
+            response.put("error", "Email not Found");
+            return ResponseEntity.ok(response);
         }
 
         AdminEntity adminEntity = (AdminEntity) admin;
         adminEntity.setPassword(encoder.encode(password));
         adminRepo.save(adminEntity);
-
-        return ResponseEntity.ok("Password updated successfully");
+        response.put("message", "Password updated successfully");
+        return ResponseEntity.ok(response);
     }
 
 }

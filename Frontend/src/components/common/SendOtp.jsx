@@ -4,6 +4,7 @@ import { makeStyles } from "@mui/styles";
 import axios from "axios";
 import Message from "../common/Message.jsx";
 import styles from "../../styles/AddStudent.module.css";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -27,7 +28,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function SendOtp({ setLoading, setIsOtpSubmitting, onClosed }) {
+function SendOtp({ setLoading, setIsOtpSubmitting, onClosed , onOtpSent }) {
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
@@ -36,6 +37,7 @@ function SendOtp({ setLoading, setIsOtpSubmitting, onClosed }) {
   const [isClosing, setIsClosing] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
   const classes = useStyles();
+  const navigate = useNavigate();
 
   const validateEmail = (email) => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -66,18 +68,26 @@ function SendOtp({ setLoading, setIsOtpSubmitting, onClosed }) {
         );
 
         if (response.status === 200) {
-          setIsError(false);
-          setMessage(response.data.message); // Success message
-          // Start closing animation
-          setIsClosing(true);
-          // Close modal after animation completes
-          setTimeout(() => {
-            setIsOpen(false);
-            onClosed();
-          }, 300);
-        } else if (response.data.error) {
-          setIsError(true);
-          setMessage(response.data.error); // Error message from backend
+          const otp = response.data.otp;
+          localStorage.setItem("otp", otp);
+          console.log(otp);
+          if (response.data.message) {
+            setIsError(false);
+            setMessage(response.data.message); // Success message
+            console.log(response.data.message); // Log the message
+            // Start closing animation
+            setIsClosing(true);
+            // Close modal after animation completes
+            setTimeout(() => {
+              setIsOpen(false);
+              onClosed();
+            }, 300);
+            onOtpSent();
+          } else if (response.data.error) {
+            setIsError(true);
+            setMessage(response.data.error); // Error message from backend
+            console.log(response.data.error); // Log the error
+          }
         }
 
         setVisible(true); // Show message
@@ -103,6 +113,8 @@ function SendOtp({ setLoading, setIsOtpSubmitting, onClosed }) {
       setIsOpen(false);
       onClosed();
     }, 300); // Match the animation duration
+    navigate("/");
+    window.location.reload();
   };
 
   return (
@@ -151,7 +163,7 @@ function SendOtp({ setLoading, setIsOtpSubmitting, onClosed }) {
         onClick={handleSendOtp}
         className="ease-in duration-200 text-center bg-[#00c6ff] rounded-md p-3 mt-5 text-[#ffffff] hover:bg-[#0082fe] shadow-sm shadow-slate-200"
       >
-        SendOtp
+        Send One Time Password
       </button>
     </div>
   );

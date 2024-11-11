@@ -74,7 +74,7 @@ const StudentDetails = ({ student }) => {
   ];
 
   return (
-    <div className="h-[100%] w-full p-5 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4">
+    <div className="h-[100%] w-full p-5 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 scrollbar-hidden">
       {/* Left Column */}
       <div className="h-full w-full bg-white rounded-lg p-6">
         <h2 className="text-2xl font-bold text-center text-blue-900 mb-6">

@@ -2,22 +2,32 @@ import React, { useState } from "react";
 import Login from "../components/common/Login";
 import Signup from "../components/common/Signup"; // Assuming you will create this component
 import SendOtp from "../components/common/SendOtp";
+import ForgotPassword from "../components/common/ForgotPassword";
 
 function Home() {
   const [loading, setLoading] = useState(false); // Manage loader visibility
   const [isLogin, setIsLogin] = useState(true); // Track whether to show Login or Signup
   const [showSendOtpModal, setShowSendOtpModal] = useState(false);
   const [isOtpSubmitting, setIsOtpSubmitting] = useState(false);
+  const [isOtpSent, setIsOtpSent] = useState(false);
+  const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
+
+  const handleOtpSent = () => {
+    setIsOtpSent(true);
+    setTimeout(() => {
+      // After OTP is sent, show the ForgotPassword component
+      setShowForgotPasswordModal(true);
+    }, 0); // Optional delay before showing ForgotPassword
+  };
 
   return (
     <div className="font-metropolis h-screen w-screen flex items-center justify-center overflow-hidden">
       {/* Loader */}
-      {loading &&
-        !isOtpSubmitting && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <span className="h-7 w-7 loading loading-spinner text-primary"></span>
-          </div>
-        )}
+      {loading && !isOtpSubmitting && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <span className="h-7 w-7 loading loading-spinner text-primary"></span>
+        </div>
+      )}
 
       {/* Left Section */}
       <div
@@ -78,7 +88,18 @@ function Home() {
           <SendOtp
             setLoading={setLoading}
             setIsOtpSubmitting={setIsOtpSubmitting}
+            onOtpSent={handleOtpSent}
             onClosed={() => setShowSendOtpModal(false)}
+          />
+        </div>
+      )}
+
+      {showForgotPasswordModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-60">
+          <ForgotPassword
+            setLoading={setLoading}
+            setIsOtpSubmitting={setIsOtpSubmitting}
+            onClosed={() => setShowForgotPasswordModal(false)}
           />
         </div>
       )}
