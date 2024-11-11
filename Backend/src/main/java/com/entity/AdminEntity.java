@@ -16,5 +16,7 @@ public class AdminEntity {
     Integer adminId;
     String email;
     String password;
+    String fullname;
+    String mobile;
 
 }

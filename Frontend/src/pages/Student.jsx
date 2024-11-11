@@ -21,8 +21,20 @@ function Student() {
 
     try {
       setLoading(true);
+
+      // Retrieve token from storage
+      const token =
+        localStorage.getItem("jwtToken") || sessionStorage.getItem("jwtToken");
+
       const response = await fetch(
-        `http://localhost:1218/api/public/admin/getStudentByName?characters=${query}`
+        `http://localhost:1218/api/private/admin/getStudentByName?characters=${query}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Attach token to the request
+          },
+          credentials: "include",
+        }
       );
 
       const data = await response.json();
@@ -44,10 +56,11 @@ function Student() {
 
   const fetchStudentDetails = async (studentId) => {
     try {
-      const token = localStorage.getItem("authToken");
+      const token =
+        localStorage.getItem("jwtToken") || sessionStorage.getItem("jwtToken");
 
       const response = await fetch(
-        `http://localhost:1218/api/public/admin/getStudentById/${studentId}`,
+        `http://localhost:1218/api/private/admin/getStudentById/${studentId}`,
         {
           method: "GET",
           headers: {
@@ -84,7 +97,7 @@ function Student() {
   };
 
   return (
-    <div className="font-metropolis flex flex-col lg:h-screen md:h-[100%] overflow-hidden w-full bg-[#90e0ef]">
+    <div className="font-metropolis flex flex-col lg:h-screen md:h-[100%] overflow-hidden w-full bg-[#90e0ef] relative">
       <Navbar
         onSearch={handleSearch}
         searchResults={searchResults}
@@ -92,10 +105,17 @@ function Student() {
         showDropdown={showDropdown} // Pass the state to Navbar
         onAddStudentClick={toggleAddStudentModal}
       />
+
+      {loading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 z-50">
+          <span className="loading loading-spinner text-primary"></span>
+        </div>
+      )}
+
       <StudentDetails student={selectedStudent} />
 
       {showAddStudentModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <AddStudent onClosed={() => setShowAddStudentModal(false)} />
         </div>
       )}

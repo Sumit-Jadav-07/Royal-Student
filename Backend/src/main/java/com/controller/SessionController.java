@@ -63,10 +63,11 @@ public class SessionController {
     @PostMapping("/login")
     public ResponseEntity<?> Login(@RequestBody LoginRequest login) {
         AdminEntity admin = adminService.authenticateAdmin(login.getEmail());
+        HashMap<String, Object> response = new HashMap<>();
+
         if (admin != null) {
             if (encoder.matches(login.getPassword(), admin.getPassword())) {
                 String token = jwtService.generateToken(login.getEmail());
-                HashMap<String, Object> response = new HashMap<>();
                 response.put("message", "Successfully Login");
                 response.put("token", token);
 
@@ -74,10 +75,12 @@ public class SessionController {
                         .header("Authorization", "Bearer " + token)
                         .body(response);
             } else {
-                return ResponseEntity.ok("Wrong password");
+                response.put("error", "Wrong password");
+                return ResponseEntity.ok(response);
             }
         }
-        return ResponseEntity.ok("Wrong email");
+        response.put("error", "Wrong email");
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/logout")
@@ -93,11 +96,13 @@ public class SessionController {
     }
 
     @PostMapping("/sendotp")
-    public ResponseEntity<String> sendOtp(@RequestBody LoginRequest loginRequest, HttpSession session) {
+    public ResponseEntity<?> sendOtp(@RequestBody LoginRequest loginRequest, HttpSession session) {
         String email = loginRequest.getEmail();
         Object admin = adminService.authenticateAdmin(email);
+        HashMap<String, Object> response = new HashMap<>();
         if (admin == null) {
-            return ResponseEntity.badRequest().body("Email not found");
+            response.put("error","Email not found");
+            return ResponseEntity.ok(response);
         }
         String otp = otpService.getOtp();
         SimpleMailMessage message = new SimpleMailMessage();
@@ -107,7 +112,8 @@ public class SessionController {
         sender.send(message);
         session.setAttribute("otp", otp);
         System.out.println(otp);
-        return ResponseEntity.ok("OTP sent successfully");
+        response.put("message", "OTP sent successfully");
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/forgotpassword")
@@ -117,14 +123,14 @@ public class SessionController {
         String otp = loginRequest.getOtp();
         String storedOtp = (String) session.getAttribute("otp");
 
-        if (storedOtp == null || !storedOtp.equals(otp)) {
-            return ResponseEntity.badRequest().body("Invalid OTP. Please request a new one");
-        }
-
         Object admin = adminService.authenticateAdmin(email);
 
         if (admin == null) {
-            return ResponseEntity.badRequest().body("Email not found");
+            return ResponseEntity.ok("Email not found");
+        }
+
+        if (storedOtp == null || !storedOtp.equals(otp)) {
+            return ResponseEntity.ok("Invalid OTP. Please request a new one");
         }
 
         AdminEntity adminEntity = (AdminEntity) admin;

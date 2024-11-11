@@ -27,7 +27,7 @@ const AddStudent = ({ onClosed }) => {
       ...formData,
       [name]: value,
     });
-  }; 
+  };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -37,8 +37,13 @@ const AddStudent = ({ onClosed }) => {
 
     try {
       if (Object.keys(ValidationErrors).length === 0) {
+        // Retrieve token from localStorage or sessionStorage
+        const token =
+          localStorage.getItem("jwtToken") ||
+          sessionStorage.getItem("jwtToken");
+
         const response = await axios.post(
-          "http://localhost:1218/api/public/admin/addstudent", 
+          "http://localhost:1218/api/private/admin/addstudent",
           {
             name: formData.name,
             email: formData.email,
@@ -49,8 +54,15 @@ const AddStudent = ({ onClosed }) => {
             communication: formData.communication,
             regularity: formData.regularity,
             testPerformance: formData.testPerformance,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`, // Attach token here
+            },
           }
         );
+
         alert(response.data);
         console.log("Form submitted successfully", response.data);
 
@@ -60,7 +72,7 @@ const AddStudent = ({ onClosed }) => {
         setTimeout(() => {
           setIsOpen(false);
           onClosed();
-        }, 300); 
+        }, 300);
       }
     } catch (error) {
       console.error("There was an error!", error);
@@ -102,7 +114,7 @@ const AddStudent = ({ onClosed }) => {
               type="text"
               id="name"
               name="name"
-              value={formData.name} 
+              value={formData.name}
               onChange={handleInputChange}
               placeholder="Student name"
               className="p-3 bg-[#daf2f6] rounded-md w-full outline-none placeholder:text-[#7d7d7d]"
@@ -115,7 +127,7 @@ const AddStudent = ({ onClosed }) => {
               type="text"
               id="email"
               name="email"
-              value={formData.email} 
+              value={formData.email}
               onChange={handleInputChange}
               placeholder="Student email"
               className="p-3 bg-[#daf2f6] rounded-md w-full outline-none placeholder:text-[#7d7d7d]"
@@ -131,7 +143,7 @@ const AddStudent = ({ onClosed }) => {
               type="text"
               id="clg"
               name="college"
-              value={formData.college} 
+              value={formData.college}
               onChange={handleInputChange}
               placeholder="College name"
               className="p-3 bg-[#daf2f6] rounded-md w-full outline-none placeholder:text-[#7d7d7d]"
@@ -149,7 +161,7 @@ const AddStudent = ({ onClosed }) => {
               type="text"
               id="batch"
               name="batch"
-              value={formData.batch} 
+              value={formData.batch}
               onChange={handleInputChange}
               placeholder="Batch name"
               className="p-3 bg-[#daf2f6] rounded-md w-full outline-none placeholder:text-[#7d7d7d]"
@@ -162,7 +174,7 @@ const AddStudent = ({ onClosed }) => {
               type="text"
               id="mobile"
               name="mobile"
-              value={formData.mobile} 
+              value={formData.mobile}
               onChange={handleInputChange}
               placeholder="Student mobile"
               className="p-3 bg-[#daf2f6] rounded-md w-full outline-none placeholder:text-[#7d7d7d]"
@@ -179,7 +191,7 @@ const AddStudent = ({ onClosed }) => {
             <select
               id="dis"
               name="discipline"
-              value={formData.discipline} 
+              value={formData.discipline}
               onChange={handleInputChange}
               className="p-3 bg-[#daf2f6] rounded-md w-full outline-none placeholder:text-[#7d7d7d]"
             >
@@ -199,7 +211,7 @@ const AddStudent = ({ onClosed }) => {
             <select
               id="cs"
               name="communication"
-              value={formData.communication} 
+              value={formData.communication}
               onChange={handleInputChange}
               className="p-3 bg-[#daf2f6] rounded-md w-full outline-none placeholder:text-[#7d7d7d]"
             >
@@ -222,7 +234,7 @@ const AddStudent = ({ onClosed }) => {
             <select
               id="reg"
               name="regularity"
-              value={formData.regularity} 
+              value={formData.regularity}
               onChange={handleInputChange}
               className="p-3 bg-[#daf2f6] rounded-md w-full outline-none placeholder:text-[#7d7d7d]"
             >
@@ -242,7 +254,7 @@ const AddStudent = ({ onClosed }) => {
             <select
               id="tp"
               name="testPerformance"
-              value={formData.testPerformance} 
+              value={formData.testPerformance}
               onChange={handleInputChange}
               className="p-3 bg-[#daf2f6] rounded-md w-full outline-none placeholder:text-[#7d7d7d]"
             >

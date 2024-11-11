@@ -27,7 +27,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function Login({ setLoading , setShowSendOtpModal }) {
+function ForgotPassword({ setLoading }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({ email: "", password: "" });
@@ -50,7 +50,7 @@ function Login({ setLoading , setShowSendOtpModal }) {
     return "";
   };
 
-  const handleLogin = async (e) => {
+  const handleForgotPassword = async (e) => {
     e.preventDefault();
 
     const emailError = validateEmail(email);
@@ -62,7 +62,7 @@ function Login({ setLoading , setShowSendOtpModal }) {
       setLoading(true); // Show loader
       try {
         const response = await axios.post(
-          "http://localhost:1218/api/public/session/login",
+          "http://localhost:1218/api/public/session/forgotpassword",
           { email, password },
           {
             headers: {
@@ -98,10 +98,6 @@ function Login({ setLoading , setShowSendOtpModal }) {
 
   const handleCloseMessage = () => {
     setVisible(false);
-  };
-
-  const handleForgotPasswordLink = () => {
-    setShowSendOtpModal(true);
   };
 
   return (
@@ -150,24 +146,14 @@ function Login({ setLoading , setShowSendOtpModal }) {
       </div>
 
       <button
-        onClick={handleLogin}
+        onClick={handleForgotPassword}
         className="ease-in duration-200 text-center bg-[#00c6ff] rounded-md p-3 mt-5 text-[#ffffff] hover:bg-[#0082fe] shadow-sm shadow-slate-200"
       >
-        Login
+        ForgotPassword
       </button>
 
-      <div className="flex items-center tracking-wide mt-4">
-        <p className="text-lg">Forgot Password?</p>
-        <a
-          className="text-[#00c0ff] hover:text-[#0082fe] text-lg ml-2"
-          href="#"
-          onClick={handleForgotPasswordLink}
-        >
-          Click here
-        </a>
-      </div>
     </div>
   );
 }
 
-export default Login;
+export default ForgotPassword;
