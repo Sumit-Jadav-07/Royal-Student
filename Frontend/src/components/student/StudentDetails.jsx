@@ -4,6 +4,9 @@ import PieChart from "./PieChart";
 import CustomProgress from "./CustomerProgress";
 import SimpleBarChart from "./SimpleBarChart";
 import RoyalLogo from "../../assets/images/logo_white-1.png";
+// import jsPDF from "jspdf";
+// import html2canvas from "html2canvas";
+
 
 const StudentDetails = ({ student }) => {
   // Default data to show when the student data is missing or not loaded
@@ -35,7 +38,6 @@ const StudentDetails = ({ student }) => {
   currentStudent.finalScore = finalScorePercentage;
 
   console.log(currentStudent.finalScore);
-  
 
   const progressData = [
     {
@@ -73,13 +75,30 @@ const StudentDetails = ({ student }) => {
     { label: "Discipline", key: "discipline", id: 4 },
   ];
 
+  // const downloadPdf = () => {
+  //   const element = document.getElementById("student-details");
+  //   html2canvas(element).then((canvas) => {
+  //     const imgData = canvas.toDataURL("image/png");
+  //     const pdf = new jsPDF("p", "mm", "a4");
+  //     pdf.addImage(imgData, "PNG", 10, 10, 190, 0);
+  //     pdf.save("student_details.pdf");
+  //   });
+  // };
+
   return (
-    <div className="h-[100%] w-full p-5 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 scrollbar-hidden">
+    <div id="student-details" className="h-[100%] w-full p-5 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 scrollbar-hidden">
       {/* Left Column */}
       <div className="h-full w-full bg-white rounded-lg p-6">
         <h2 className="text-2xl font-bold text-center text-blue-900 mb-6">
           Student Details
         </h2>
+
+        {/* <button
+          onClick={downloadPdf}
+          className="text-sm bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-200"
+        >
+          Download PDF
+        </button> */}
 
         {/* Profile Picture */}
         <div className="flex justify-center mb-6">
@@ -151,7 +170,7 @@ const StudentDetails = ({ student }) => {
         <div className="w-full bg-white rounded-md flex flex-col justify-between items-center p-4 lg:col-span-2 md:col-span-1 max-sm:col-span-3 sm:col-span-3">
           <h3>Final Score</h3>
           <div className="h-[180px] w-[180px]">
-            <PieChart finalScore={currentStudent.finalScore}/>
+            <PieChart finalScore={currentStudent.finalScore} />
           </div>
           <p className="text-xl font-bold mt-2">
             {currentStudent.finalScore || "N/A"}&#x25;

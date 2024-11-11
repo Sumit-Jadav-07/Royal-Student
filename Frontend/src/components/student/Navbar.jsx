@@ -1,6 +1,7 @@
 import React from "react";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import RoyalLogo from "../../assets/images/logo_white-1.png";
+import { useNavigate  } from "react-router-dom";
 
 const Navbar = ({
   onSearch,
@@ -9,6 +10,14 @@ const Navbar = ({
   showDropdown,
   onAddStudentClick,
 }) => {
+  const navigate = useNavigate ();
+
+  const handleLogout = () => {
+    localStorage.removeItem("JwtToken");
+    navigate("/");
+    window.location.reload();
+  };
+
   return (
     <>
       <div className="h-auto flex items-center justify-between bg-[#00b4d8] p-3 transition-all duration-150 ease-linear scrollbar-hidden">
@@ -55,7 +64,10 @@ const Navbar = ({
             Add Student
           </button>
 
-          <button className="bg-[#caf0f8] p-2 rounded-full text-[15px] pl-7 pr-7 text-black font-bold ">
+          <button
+            onClick={handleLogout}
+            className="bg-[#caf0f8] p-2 rounded-full text-[15px] pl-7 pr-7 text-black font-bold "
+          >
             Logout
           </button>
         </div>
