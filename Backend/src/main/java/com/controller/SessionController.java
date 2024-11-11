@@ -121,7 +121,6 @@ public class SessionController {
     public ResponseEntity<?> forgotPassword(@RequestBody LoginRequest loginRequest, HttpSession session) {
         String email = loginRequest.getEmail();
         String password = loginRequest.getPassword();
-        String otp = loginRequest.getOtp();
         String storedOtp = (String) session.getAttribute("otp");
         HashMap<String, Object> response = new HashMap<>();
         System.out.println("Stored Otp " + storedOtp);
