@@ -8,7 +8,7 @@ function Home() {
   const [loading, setLoading] = useState(false); // Manage loader visibility
   const [isLogin, setIsLogin] = useState(true); // Track whether to show Login or Signup
   const [showSendOtpModal, setShowSendOtpModal] = useState(false);
-  const [isOtpSubmitting, setIsOtpSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOtpSent, setIsOtpSent] = useState(false);
   const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
 
@@ -23,7 +23,7 @@ function Home() {
   return (
     <div className="font-metropolis h-screen w-screen flex items-center justify-center overflow-hidden">
       {/* Loader */}
-      {loading && !isOtpSubmitting && (
+      {loading && !isSubmitting && (
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <span className="h-7 w-7 loading loading-spinner text-primary"></span>
         </div>
@@ -86,8 +86,7 @@ function Home() {
       {showSendOtpModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-60">
           <SendOtp
-            setLoading={setLoading}
-            setIsOtpSubmitting={setIsOtpSubmitting}
+            setIsSubmitting={setIsSubmitting}
             onOtpSent={handleOtpSent}
             onClosed={() => setShowSendOtpModal(false)}
           />
@@ -97,15 +96,14 @@ function Home() {
       {showForgotPasswordModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-60">
           <ForgotPassword
-            setLoading={setLoading}
-            setIsOtpSubmitting={setIsOtpSubmitting}
+            setIsSubmitting={setIsSubmitting}
             onClosed={() => setShowForgotPasswordModal(false)}
           />
         </div>
       )}
 
-      {/* Loader during OTP submission */}
-      {isOtpSubmitting && (
+      {/* Loader during Submission */}
+      {isSubmitting && (
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 z-70">
           <span className="h-7 w-7 loading loading-spinner text-primary"></span>
         </div>

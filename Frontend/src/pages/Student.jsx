@@ -2,6 +2,7 @@ import { useState } from "react";
 import Navbar from "../components/student/Navbar";
 import StudentDetails from "../components/student/StudentDetails";
 import AddStudent from "../components/student/AddStudent";
+import EditStudent from "../components/student/EditStudent";
 
 function Student() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -11,44 +12,44 @@ function Student() {
   const [error, setError] = useState("");
   const [showDropdown, setShowDropdown] = useState(false); // Manage dropdown visibility
   const [showAddStudentModal, setShowAddStudentModal] = useState(false);
+  const [showEditStudentModal, setShowEditStudentModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const fetchApi = async (url, options = {}) => {
+    const token =
+      localStorage.getItem("jwtToken") || sessionStorage.getItem("jwtToken");
+
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      ...options.headers,
+    };
+
+    const response = await fetch(url, { ...options, headers });
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Error occurred");
+    }
+    return response.json();
+  };
 
   const fetchSearchResults = async (query) => {
     if (!query) {
       setSearchResults([]);
-      setShowDropdown(false); // Hide dropdown if no query
+      setShowDropdown(false);
       return;
     }
 
     try {
       setLoading(true);
-
-      // Retrieve token from storage
-      const token =
-        localStorage.getItem("jwtToken") || sessionStorage.getItem("jwtToken");
-
-      const response = await fetch(
-        `http://localhost:1218/api/private/admin/getStudentByName?characters=${query}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Attach token to the request
-          },
-          credentials: "include",
-        }
+      const data = await fetchApi(
+        `http://localhost:1218/api/private/admin/getStudentByName?characters=${query}`
       );
-
-      const data = await response.json();
-      console.log("Fetched data:", data);
-      if (response.ok) {
-        setSearchResults(data);
-        setShowDropdown(true); // Show dropdown when search results are available
-      } else {
-        setError("No results found");
-        setShowDropdown(false); // Hide dropdown if no results
-      }
+      setSearchResults(data);
+      setShowDropdown(true);
     } catch (err) {
-      setError("Error fetching student");
-      setShowDropdown(false); // Hide dropdown on error
+      setError(err.message);
+      setShowDropdown(false);
     } finally {
       setLoading(false);
     }
@@ -56,30 +57,16 @@ function Student() {
 
   const fetchStudentDetails = async (studentId) => {
     try {
-      const token =
-        localStorage.getItem("jwtToken") || sessionStorage.getItem("jwtToken");
-
-      const response = await fetch(
-        `http://localhost:1218/api/private/admin/getStudentById/${studentId}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
+      setLoading(true);
+      const data = await fetchApi(
+        `http://localhost:1218/api/private/admin/getStudentById/${studentId}`
       );
-
-      const data = await response.json();
-      if (response.ok) {
-        console.log("Student Details:", data);
-        setSelectedStudent(data); // Set student data
-        setShowDropdown(false); // Hide dropdown after selecting a student
-      } else {
-        console.log("Error fetching student details:", data.message);
-      }
+      setSelectedStudent(data);
+      setShowDropdown(false);
     } catch (err) {
-      console.error("Error:", err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -92,8 +79,21 @@ function Student() {
     fetchStudentDetails(studentId);
   };
 
+  const handleEditStudent = () => {
+    setShowEditStudentModal(false);
+  };
+  
   const toggleAddStudentModal = () => {
     setShowAddStudentModal(!showAddStudentModal); // Toggle modal visibility
+  };
+
+  const toggleEditStudentModal = () => {
+    setShowEditStudentModal(!showEditStudentModal); // Toggle modal visibility
+  };
+
+  const handleRefreshAfterEdit = async () => {
+    await fetchStudentDetails(selectedStudent.studentId); // Ensure `student.id` is up-to-date
+    setShowEditStudentModal(false);
   };
 
   return (
@@ -112,11 +112,26 @@ function Student() {
         </div>
       )}
 
-      <StudentDetails student={selectedStudent} />
+      <StudentDetails
+        student={selectedStudent}
+        onEditStudent={toggleEditStudentModal}
+      />
 
       {showAddStudentModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <AddStudent onClosed={() => setShowAddStudentModal(false)} />
+        </div>
+      )}
+
+      {showEditStudentModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <EditStudent
+            onClosed={handleEditStudent}
+            onRefresh={handleRefreshAfterEdit}
+            studentData={selectedStudent}
+            setIsSubmitting={setIsSubmitting}
+            setLoading={setLoading}
+          />
         </div>
       )}
     </div>

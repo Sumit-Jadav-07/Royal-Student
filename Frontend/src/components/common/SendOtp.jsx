@@ -28,7 +28,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function SendOtp({ setLoading, setIsOtpSubmitting, onClosed , onOtpSent }) {
+function SendOtp({ setIsSubmitting, onClosed , onOtpSent }) {
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
@@ -54,8 +54,7 @@ function SendOtp({ setLoading, setIsOtpSubmitting, onClosed , onOtpSent }) {
     setErrors({ email: emailError });
 
     if (!emailError) {
-      setLoading(true); // Show loader
-      setIsOtpSubmitting(true); // Show OTP submission loader
+      setIsSubmitting(true); // Show OTP submission loader
       try {
         const response = await axios.post(
           "http://localhost:1218/api/public/session/sendotp",
@@ -97,8 +96,7 @@ function SendOtp({ setLoading, setIsOtpSubmitting, onClosed , onOtpSent }) {
         setMessage("SendOtp failed. Please try again.");
         setVisible(true); // Show error message
       } finally {
-        setLoading(false); // Hide loader
-        setIsOtpSubmitting(false); // Hide OTP submission loader
+        setIsSubmitting(false); // Hide OTP submission loader
       }
     }
   };

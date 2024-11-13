@@ -28,7 +28,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-function ForgotPassword({ setLoading, setIsOtpSubmitting, onClosed }) {
+function ForgotPassword({ setIsSubmitting, onClosed }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [otp, setOtp] = useState("");
@@ -70,8 +70,7 @@ function ForgotPassword({ setLoading, setIsOtpSubmitting, onClosed }) {
     setErrors({ email: emailError, password: passwordError, otp: otpError });
 
     if (!emailError && !passwordError) {
-      setLoading(true); // Show loader
-      setIsOtpSubmitting(true);
+      setIsSubmitting(true);
       try {
         const response = await axios.post(
           "http://localhost:1218/api/public/session/forgotpassword",
@@ -101,8 +100,7 @@ function ForgotPassword({ setLoading, setIsOtpSubmitting, onClosed }) {
         setMessage("Login failed. Please try again.");
         setVisible(true); // Show error message
       } finally {
-        setLoading(false); // Hide loader
-        setIsOtpSubmitting(false);
+        setIsSubmitting(false);
       }
     }
   };

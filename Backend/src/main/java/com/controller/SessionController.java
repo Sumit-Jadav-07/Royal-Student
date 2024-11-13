@@ -12,8 +12,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties.Admin;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
@@ -52,12 +54,18 @@ public class SessionController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> Signup(@RequestBody AdminEntity entity) {
-        if (entity.getEmail() == null && entity.getPassword() == null) {
-            return ResponseEntity.ok("Please enter your email or password");
+        AdminEntity admin = adminService.authenticateAdmin(entity.getEmail());
+        HashMap<String, Object> response = new HashMap<String, Object>();
+        if (admin == null) {
+            entity.setPassword(encoder.encode(entity.getPassword()));
+            adminRepo.save(entity);
+            response.put("message", "Signup successful");
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("error", "Email already exists");
+            return ResponseEntity.ok(response);
         }
-        entity.setPassword(encoder.encode(entity.getPassword()));
-        adminRepo.save(entity);
-        return ResponseEntity.ok("Success");
+
     }
 
     @PostMapping("/login")
@@ -101,7 +109,7 @@ public class SessionController {
         Object admin = adminService.authenticateAdmin(email);
         HashMap<String, Object> response = new HashMap<>();
         if (admin == null) {
-            response.put("error","Email not found");
+            response.put("error", "Email not found");
             return ResponseEntity.ok(response);
         }
         String otp = otpService.getOtp();
@@ -113,7 +121,7 @@ public class SessionController {
         session.setAttribute("otp", otp);
         System.out.println(otp);
         response.put("message", "OTP sent successfully");
-        response.put("otp",otp);
+        response.put("otp", otp);
         return ResponseEntity.ok(response);
     }
 

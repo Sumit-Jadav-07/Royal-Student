@@ -3,6 +3,7 @@ package com.controller;
 import com.entity.StudentEntity;
 import com.repository.StudentRepository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,5 +48,27 @@ public class StudentController {
         }
         return ResponseEntity.ok("Student not found");
     }
+
+    @PutMapping("/editstudent/{id}")
+    public ResponseEntity<?> editStudent(@PathVariable Integer id, @RequestBody StudentEntity entity){
+        Optional<StudentEntity> op = studentRepo.findById(id);
+        HashMap<String,Object> response = new HashMap<String,Object>();
+        if(op.isPresent()){
+            StudentEntity student = op.get();
+            student.setName(entity.getName());
+            student.setEmail(entity.getEmail());
+            student.setMobile(entity.getMobile());
+            student.setBatch(entity.getBatch());
+            student.setCollege(entity.getCollege());
+            student.setCommunication(entity.getCommunication());
+            student.setDiscipline(entity.getDiscipline());
+            student.setRegularity(entity.getRegularity());
+            student.setTestPerformance(entity.getTestPerformance());
+            studentRepo.save(student);
+            response.put("message", "Student updated successfully");
+            return ResponseEntity.ok(response);
+        }
+        response.put("error", "Student not found");
+        return ResponseEntity.ok(response);
+    }
 }
-;

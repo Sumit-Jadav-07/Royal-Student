@@ -94,19 +94,20 @@ function Signup({ setLoading }) {
           }
         );
 
-        if (response.status === 200 && response.data.token) {
-          setIsError(false);
-          setMessage(response.data.message); // Success message
-        } else if (response.data.error) {
-          setIsError(true);
-          setMessage(response.data.error); // Error message from backend
+        if (response.status === 200) {
+          if (response.data.message) {
+            setIsError(false);
+            setMessage(response.data.message); // Success message
+          } else if (response.data.error) {
+            setIsError(true);
+            setMessage(response.data.error); // Error message from backend
+          }
         }
-
         setVisible(true); // Show message
       } catch (error) {
         console.error("There was an error!", error.response || error.message);
         setIsError(true);
-        setMessage("Login failed. Please try again.");
+        setMessage("Signup failed. Please try again.");
         setVisible(true); // Show error message
       } finally {
         setLoading(false); // Hide loader
@@ -120,7 +121,6 @@ function Signup({ setLoading }) {
 
   return (
     <div className="relative font-metropolis h-auto w-[475px] bg-white p-7 flex flex-col rounded-md shadow-lg shadow-indigo-500/40">
-
       <Message
         message={message}
         isError={isError}

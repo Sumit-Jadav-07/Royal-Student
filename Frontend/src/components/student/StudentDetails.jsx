@@ -7,8 +7,8 @@ import RoyalLogo from "../../assets/images/logo_white-1.png";
 // import jsPDF from "jspdf";
 // import html2canvas from "html2canvas";
 
+const StudentDetails = ({ student , onEditStudent }) => {
 
-const StudentDetails = ({ student }) => {
   // Default data to show when the student data is missing or not loaded
   const defaultStudent = {
     name: "",
@@ -86,12 +86,21 @@ const StudentDetails = ({ student }) => {
   // };
 
   return (
-    <div id="student-details" className="h-[100%] w-full p-5 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 scrollbar-hidden">
+    <div
+      id="student-details"
+      className="h-[100%] w-full p-5 grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-4 scrollbar-hidden"
+    >
       {/* Left Column */}
       <div className="h-full w-full bg-white rounded-lg p-6">
-        <h2 className="text-2xl font-bold text-center text-blue-900 mb-6">
-          Student Details
-        </h2>
+        <div className="flex justify-between">
+          <h2 className="text-2xl font-bold text-center text-blue-900 mb-6">
+            Student Details
+          </h2>
+          <i
+            className="fa fa-edit text-[24px] text-[#0082fe]"
+            onClick={onEditStudent}
+          ></i>
+        </div>
 
         {/* <button
           onClick={downloadPdf}
@@ -206,6 +215,7 @@ const StudentDetails = ({ student }) => {
           <img src={RoyalLogo} alt="Logo" className="h-12 lg:w-[70%] lg:h-15" />
         </div>
       </div>
+
     </div>
   );
 };
