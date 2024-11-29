@@ -29,94 +29,108 @@ const useStyles = makeStyles(() => ({
 }));
 
 function ForgotPassword({ setIsSubmitting, onClosed }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [otp, setOtp] = useState("");
-  const [errors, setErrors] = useState({ email: "", password: "" });
-  const [message, setMessage] = useState("");
-  const [isError, setIsError] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
-  const classes = useStyles();
-  const navigate = useNavigate();
+  // State variables for form inputs and validations
+  const [email, setEmail] = useState(""); // Stores email input value
+  const [password, setPassword] = useState(""); // Stores password input value
+  const [otp, setOtp] = useState(""); // Stores OTP input value
+  const [errors, setErrors] = useState({ email: "", password: "", otp: "" }); // Validation error messages
+  const [message, setMessage] = useState(""); // Message to display (success/error)
+  const [isError, setIsError] = useState(false); // Determines if the message is an error
+  const [visible, setVisible] = useState(false); // Controls message visibility
+  const [isClosing, setIsClosing] = useState(false); // Tracks if the popup is closing
+  const classes = useStyles(); // Apply custom styles
+  const navigate = useNavigate(); // React Router hook for navigation
 
+  // Validate email format and check if it's empty
   const validateEmail = (email) => {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email) return "Email is required";
-    if (!emailPattern.test(email)) return "Invalid email format";
-    return "";
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex for email validation
+    if (!email) return "Email is required"; // Check if empty
+    if (!emailPattern.test(email)) return "Invalid email format"; // Check if format is correct
+    return ""; // No error
   };
 
+  // Validate password length and check if it's empty
   const validatePassword = (password) => {
-    if (!password) return "Password is required";
-    if (password.length < 8) return "Password must be at least 8 characters";
-    return "";
+    if (!password) return "Password is required"; // Check if empty
+    if (password.length < 8) return "Password must be at least 8 characters"; // Minimum length requirement
+    return ""; // No error
   };
 
-  const storedOtp = localStorage.getItem("otp");
+  // Validate OTP (compares with stored OTP in localStorage)
+  const storedOtp = localStorage.getItem("otp"); // Retrieve stored OTP
   const validateOtp = (otp) => {
-    if (!otp) return "Otp is required";
-    if (storedOtp != otp) return "Invalid OTP";
-    return "";
+    if (!otp) return "OTP is required"; // Check if empty
+    if (storedOtp != otp) return "Invalid OTP"; // Check if OTP matches
+    return ""; // No error
   };
 
+  // Handles form submission
   const handleForgotPassword = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form behavior
 
+    // Perform validation for all fields
     const emailError = validateEmail(email);
     const passwordError = validatePassword(password);
     const otpError = validateOtp(otp);
 
+    // Update error state if validation fails
     setErrors({ email: emailError, password: passwordError, otp: otpError });
 
-    if (!emailError && !passwordError) {
-      setIsSubmitting(true);
+    // Only proceed if no errors
+    if (!emailError && !passwordError && !otpError) {
+      setIsSubmitting(true); // Show loading state
       try {
+        // Make an API call to update the password
         const response = await axios.post(
-          "http://localhost:1218/api/public/session/forgotpassword",
-          { email, password, otp },
+          "http://localhost:1218/api/public/session/forgotpassword", // API endpoint
+          { email, password, otp }, // Data to send
           {
             headers: {
-              "Content-Type": "application/json",
+              "Content-Type": "application/json", // Set content type to JSON
             },
           }
         );
 
+        // Handle API response
         if (response.status === 200) {
           if (response.data.message) {
+            // Success message from backend
             setIsError(false);
-            setMessage(response.data.message); // Success message
-            handleClose();
+            setMessage(response.data.message);
+            handleClose(); // Close the form
           } else if (response.data.error) {
+            // Error message from backend
             setIsError(true);
-            setMessage(response.data.error); // Error message from backend
-            console.log(response.data.error); // Log the error
+            setMessage(response.data.error);
+            console.log(response.data.error); // Log error for debugging
           }
         }
-        setVisible(true); // Show message
+        setVisible(true); // Show the message component
       } catch (error) {
+        // Handle API errors
         console.error("There was an error!", error.response || error.message);
         setIsError(true);
-        setMessage("Login failed. Please try again.");
+        setMessage("Password update failed. Please try again."); // Generic error message
         setVisible(true); // Show error message
       } finally {
-        setIsSubmitting(false);
+        setIsSubmitting(false); // Reset loading state
       }
     }
   };
 
+  // Closes the message component
   const handleCloseMessage = () => {
-    setVisible(false);
+    setVisible(false); // Hide message
   };
 
+  // Handles popup close and navigates back to home
   const handleClose = () => {
-    setIsClosing(true);
+    setIsClosing(true); // Trigger closing animation
     setTimeout(() => {
-      setIsOpen(false);
-      onClosed();
-    }, 300); // Match the animation duration
-    navigate("/");
-    window.location.reload();
+      onClosed(); // Call parent close function
+    }, 300); // Animation duration
+    navigate("/"); // Redirect to home page
+    window.location.reload(); // Refresh the page
   };
 
   return (
@@ -125,10 +139,11 @@ function ForgotPassword({ setIsSubmitting, onClosed }) {
         isClosing ? styles.popupClosing : styles.popupAnimation
       } z-60`}
       style={{
-        maxHeight: errors && Object.keys(errors).length > 0 ? "90vh" : "auto", // Sets max height only when errors are present
-        overflowY: errors && Object.keys(errors).length > 0 ? "auto" : "hidden", // Enables scrolling when errors exist
+        maxHeight: errors && Object.keys(errors).length > 0 ? "90vh" : "auto", // Scroll only if there are errors
+        overflowY: errors && Object.keys(errors).length > 0 ? "auto" : "hidden", // Enable scrolling for errors
       }}
     >
+      {/* Message component to show success/error */}
       <Message
         message={message}
         isError={isError}
@@ -136,14 +151,15 @@ function ForgotPassword({ setIsSubmitting, onClosed }) {
         onClose={handleCloseMessage}
       />
 
+      {/* Title and Close Button */}
       <div className="w-full flex justify-between">
         <h1 className="text-3xl font-bold">Update Password</h1>
-
         <span onClick={handleClose} className="text-xl cursor-pointer">
-          &#10006;
+          &#10006; {/* Close icon */}
         </span>
       </div>
 
+      {/* Input fields for email, password, and OTP */}
       <div className="mt-6 space-y-4">
         <TextField
           fullWidth
@@ -154,12 +170,11 @@ function ForgotPassword({ setIsSubmitting, onClosed }) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className={classes.root}
-          error={Boolean(errors.email)}
+          error={Boolean(errors.email)} // Highlight error if any
         />
         {errors.email && (
-          <span className={classes.errorText}>{errors.email}</span>
+          <span className={classes.errorText}>{errors.email}</span> // Show email error
         )}
-
         <TextField
           fullWidth
           id="outlined-password"
@@ -169,12 +184,11 @@ function ForgotPassword({ setIsSubmitting, onClosed }) {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className={classes.root}
-          error={Boolean(errors.password)}
+          error={Boolean(errors.password)} // Highlight error if any
         />
         {errors.password && (
-          <span className={classes.errorText}>{errors.password}</span>
+          <span className={classes.errorText}>{errors.password}</span> // Show password error
         )}
-
         <TextField
           fullWidth
           id="outlined-basic"
@@ -184,11 +198,13 @@ function ForgotPassword({ setIsSubmitting, onClosed }) {
           value={otp}
           onChange={(e) => setOtp(e.target.value)}
           className={classes.root}
-          error={Boolean(errors.otp)}
+          error={Boolean(errors.otp)} // Highlight error if any
         />
-        {errors.otp && <span className={classes.errorText}>{errors.otp}</span>}
+        {errors.otp && <span className={classes.errorText}>{errors.otp}</span>}{" "}
+        // Show OTP error
       </div>
 
+      {/* Submit button */}
       <button
         onClick={handleForgotPassword}
         className="ease-in duration-200 text-center bg-[#00c6ff] rounded-md p-3 mt-5 text-[#ffffff] hover:bg-[#0082fe] shadow-sm shadow-slate-200"

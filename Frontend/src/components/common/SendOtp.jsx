@@ -1,118 +1,116 @@
 import React, { useState } from "react";
-import TextField from "@mui/material/TextField";
-import { makeStyles } from "@mui/styles";
-import axios from "axios";
-import Message from "../common/Message.jsx";
-import styles from "../../styles/AddStudent.module.css";
-import { useNavigate } from "react-router-dom";
+import TextField from "@mui/material/TextField"; // Material-UI TextField for email input
+import { makeStyles } from "@mui/styles"; // Styling with makeStyles
+import axios from "axios"; // For sending HTTP requests
+import Message from "../common/Message.jsx"; // Custom Message component for success/error display
+import styles from "../../styles/AddStudent.module.css"; // CSS module for animations
+import { useNavigate } from "react-router-dom"; // Navigation hook for redirecting
 
+// Custom styles for Material-UI components
 const useStyles = makeStyles(() => ({
   root: {
     "& .MuiOutlinedInput-root": {
       "&.Mui-focused fieldset": {
-        borderColor: "green",
+        borderColor: "green", // Green border when input is focused
       },
-      fontFamily: "Metropolis, sans-serif",
+      fontFamily: "Metropolis, sans-serif", // Font style
     },
     "& .MuiInputLabel-root": {
       "&.Mui-focused": {
-        color: "green",
+        color: "green", // Green label text when focused
       },
       fontFamily: "Metropolis, sans-serif",
     },
   },
   errorText: {
-    color: "red",
+    color: "red", // Error text styling
     fontSize: "0.875rem",
     marginTop: "0.5rem",
   },
 }));
 
-function SendOtp({ setIsSubmitting, onClosed , onOtpSent }) {
-  const [email, setEmail] = useState("");
-  const [errors, setErrors] = useState({ email: "", password: "" });
-  const [message, setMessage] = useState("");
-  const [isError, setIsError] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
-  const [isOpen, setIsOpen] = useState(true);
-  const classes = useStyles();
-  const navigate = useNavigate();
+// Main SendOtp component
+function SendOtp({ setIsSubmitting, onClosed, onOtpSent }) {
+  const [email, setEmail] = useState(""); // State for email input
+  const [errors, setErrors] = useState({ email: "" }); // State for input errors
+  const [message, setMessage] = useState(""); // Message for success or error
+  const [isError, setIsError] = useState(false); // Boolean to track error state
+  const [visible, setVisible] = useState(false); // Controls message visibility
+  const [isClosing, setIsClosing] = useState(false); // Controls closing animation
+  const [isOpen, setIsOpen] = useState(true); // Manages modal visibility
+  const classes = useStyles(); // Custom styles
+  const navigate = useNavigate(); // Navigation hook
 
+  // Validates email input
   const validateEmail = (email) => {
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email) return "Email is required";
-    if (!emailPattern.test(email)) return "Invalid email format";
-    return "";
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Regex for valid email
+    if (!email) return "Email is required"; // Error for empty input
+    if (!emailPattern.test(email)) return "Invalid email format"; // Error for invalid email
+    return ""; // No error
   };
 
+  // Handles OTP sending
   const handleSendOtp = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission
 
-    const emailError = validateEmail(email);
-
-    setErrors({ email: emailError });
+    const emailError = validateEmail(email); // Validate email
+    setErrors({ email: emailError }); // Update error state
 
     if (!emailError) {
-      setIsSubmitting(true); // Show OTP submission loader
+      setIsSubmitting(true); // Show loader
       try {
+        // Send POST request to backend
         const response = await axios.post(
           "http://localhost:1218/api/public/session/sendotp",
           { email },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
+          { headers: { "Content-Type": "application/json" } }
         );
 
         if (response.status === 200) {
-          const otp = response.data.otp;
-          localStorage.setItem("otp", otp);
-          console.log(otp);
+          const otp = response.data.otp; // Extract OTP from response
+          localStorage.setItem("otp", otp); // Save OTP locally
+          console.log(otp); // Debugging
+
           if (response.data.message) {
-            setIsError(false);
-            setMessage(response.data.message); // Success message
-            console.log(response.data.message); // Log the message
-            // Start closing animation
-            setIsClosing(true);
-            // Close modal after animation completes
+            setIsError(false); // Mark as success
+            setMessage(response.data.message); // Display success message
+            setIsClosing(true); // Trigger closing animation
             setTimeout(() => {
-              setIsOpen(false);
-              onClosed();
+              setIsOpen(false); // Close modal
+              onClosed(); // Call parent callback
             }, 300);
-            onOtpSent();
+            onOtpSent(); // Notify OTP sent
           } else if (response.data.error) {
-            setIsError(true);
-            setMessage(response.data.error); // Error message from backend
-            console.log(response.data.error); // Log the error
+            setIsError(true); // Mark as error
+            setMessage(response.data.error); // Display error message
           }
         }
-
         setVisible(true); // Show message
       } catch (error) {
-        console.error("There was an error!", error.response || error.message);
+        console.error("There was an error!", error.response || error.message); // Log error
         setIsError(true);
-        setMessage("SendOtp failed. Please try again.");
-        setVisible(true); // Show error message
+        setMessage("SendOtp failed. Please try again."); // Fallback error message
+        setVisible(true);
       } finally {
-        setIsSubmitting(false); // Hide OTP submission loader
+        setIsSubmitting(false); // Hide loader
       }
     }
   };
 
+  // Closes the message
   const handleCloseMessage = () => {
-    setVisible(false);
+    setVisible(false); // Hide message
   };
 
+  // Closes the modal
   const handleClose = () => {
-    setIsClosing(true);
+    setIsClosing(true); // Trigger closing animation
     setTimeout(() => {
-      setIsOpen(false);
-      onClosed();
-    }, 300); // Match the animation duration
-    navigate("/");
-    window.location.reload();
+      setIsOpen(false); // Close modal
+      onClosed(); // Notify parent
+    }, 300);
+    navigate("/"); // Redirect to home
+    window.location.reload(); // Reload the app
   };
 
   return (
@@ -121,10 +119,11 @@ function SendOtp({ setIsSubmitting, onClosed , onOtpSent }) {
         isClosing ? styles.popupClosing : styles.popupAnimation
       } z-60`}
       style={{
-        maxHeight: errors && Object.keys(errors).length > 0 ? "90vh" : "auto", // Sets max height only when errors are present
-        overflowY: errors && Object.keys(errors).length > 0 ? "auto" : "hidden", // Enables scrolling when errors exist
+        maxHeight: errors && Object.keys(errors).length > 0 ? "90vh" : "auto", // Enable scrolling when errors exist
+        overflowY: errors && Object.keys(errors).length > 0 ? "auto" : "hidden",
       }}
     >
+      {/* Message Component */}
       <Message
         message={message}
         isError={isError}
@@ -132,14 +131,15 @@ function SendOtp({ setIsSubmitting, onClosed , onOtpSent }) {
         onClose={handleCloseMessage}
       />
 
+      {/* Header Section */}
       <div className="w-full flex justify-between">
         <h1 className="text-3xl font-bold">SendOtp</h1>
-
         <span onClick={handleClose} className="text-xl cursor-pointer">
-          &#10006;
+          &#10006; {/* Close button */}
         </span>
       </div>
 
+      {/* Email Input Section */}
       <div className="mt-6 space-y-4">
         <TextField
           fullWidth
@@ -150,13 +150,14 @@ function SendOtp({ setIsSubmitting, onClosed , onOtpSent }) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className={classes.root}
-          error={Boolean(errors.email)}
+          error={Boolean(errors.email)} // Highlights input on error
         />
         {errors.email && (
-          <span className={classes.errorText}>{errors.email}</span>
+          <span className={classes.errorText}>{errors.email}</span> // Error message
         )}
       </div>
 
+      {/* Send OTP Button */}
       <button
         onClick={handleSendOtp}
         className="ease-in duration-200 text-center bg-[#00c6ff] rounded-md p-3 mt-5 text-[#ffffff] hover:bg-[#0082fe] shadow-sm shadow-slate-200"

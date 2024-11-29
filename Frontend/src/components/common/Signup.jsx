@@ -1,32 +1,35 @@
-import React, { useState } from "react";
-import TextField from "@mui/material/TextField";
-import { makeStyles } from "@mui/styles";
-import axios from "axios";
-import Message from "../common/Message.jsx";
+import React, { useState } from "react"; // Import React and useState hook
+import TextField from "@mui/material/TextField"; // Import Material-UI TextField for input fields
+import { makeStyles } from "@mui/styles"; // Import makeStyles for custom styles
+import axios from "axios"; // Import axios for HTTP requests
+import Message from "../common/Message.jsx"; // Import custom Message component for displaying notifications
 
+// Custom styles using Material-UI's makeStyles
 const useStyles = makeStyles(() => ({
   root: {
     "& .MuiOutlinedInput-root": {
       "&.Mui-focused fieldset": {
-        borderColor: "green",
+        borderColor: "green", // Change border color to green on focus
       },
-      fontFamily: "Metropolis, sans-serif",
+      fontFamily: "Metropolis, sans-serif", // Set custom font
     },
     "& .MuiInputLabel-root": {
       "&.Mui-focused": {
-        color: "green",
+        color: "green", // Change label color to green on focus
       },
-      fontFamily: "Metropolis, sans-serif",
+      fontFamily: "Metropolis, sans-serif", // Set custom font
     },
   },
   errorText: {
-    color: "red",
-    fontSize: "0.875rem",
-    marginTop: "0.5rem",
+    color: "red", // Error text color
+    fontSize: "0.875rem", // Font size for error text
+    marginTop: "0.5rem", // Spacing above error text
   },
 }));
 
+// Signup component
 function Signup({ setLoading }) {
+  // State variables to manage input values, errors, and messages
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [mobile, setMobile] = useState("");
@@ -35,8 +38,9 @@ function Signup({ setLoading }) {
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
   const [visible, setVisible] = useState(false);
-  const classes = useStyles();
+  const classes = useStyles(); // Use custom styles
 
+  // Function to validate email format
   const validateEmail = (email) => {
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) return "Email is required";
@@ -44,12 +48,14 @@ function Signup({ setLoading }) {
     return "";
   };
 
+  // Function to validate password rules
   const validatePassword = (password) => {
     if (!password) return "Password is required";
     if (password.length < 8) return "Password must be at least 8 characters";
     return "";
   };
 
+  // Function to validate the full name format
   const validateFullname = (fullname) => {
     if (!fullname) return "Full name is required";
     const nameParts = fullname.trim().split(" ");
@@ -58,22 +64,26 @@ function Signup({ setLoading }) {
     return "";
   };
 
+  // Function to validate mobile number
   const validateMobile = (mobile) => {
-    const mobilePattern = /^\d{10}$/; // Example: 10-digit mobile number
+    const mobilePattern = /^\d{10}$/; // Validate 10-digit mobile numbers
     if (!mobile) return "Mobile number is required";
     if (!mobilePattern.test(mobile))
       return "Invalid mobile number format. It must be 10 digits.";
     return "";
   };
 
+  // Function to handle the signup process
   const handleSignup = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission
 
+    // Validate all input fields
     const emailError = validateEmail(email);
     const passwordError = validatePassword(password);
     const mobileError = validateMobile(mobile);
     const fullNameError = validateFullname(fullname);
 
+    // Set validation errors in state
     setErrors({
       email: emailError,
       password: passwordError,
@@ -81,46 +91,52 @@ function Signup({ setLoading }) {
       fullname: fullNameError,
     });
 
+    // Proceed if no errors
     if (!emailError && !passwordError && !mobileError && !fullNameError) {
-      setLoading(true); // Show loader
+      setLoading(true); // Show loading indicator
       try {
+        // Send signup request to the backend
         const response = await axios.post(
           "http://localhost:1218/api/public/session/signup",
-          { email, password, mobile, fullname },
+          { email, password, mobile, fullname }, // Request payload
           {
             headers: {
-              "Content-Type": "application/json",
+              "Content-Type": "application/json", // Set headers
             },
           }
         );
 
+        // Handle backend response
         if (response.status === 200) {
           if (response.data.message) {
-            setIsError(false);
-            setMessage(response.data.message); // Success message
+            setIsError(false); // Success case
+            setMessage(response.data.message); // Show success message
           } else if (response.data.error) {
-            setIsError(true);
-            setMessage(response.data.error); // Error message from backend
+            setIsError(true); // Error case
+            setMessage(response.data.error); // Show error message
           }
         }
-        setVisible(true); // Show message
+        setVisible(true); // Make message visible
       } catch (error) {
+        // Handle request errors
         console.error("There was an error!", error.response || error.message);
         setIsError(true);
-        setMessage("Signup failed. Please try again.");
+        setMessage("Signup failed. Please try again."); // Display generic error message
         setVisible(true); // Show error message
       } finally {
-        setLoading(false); // Hide loader
+        setLoading(false); // Hide loading indicator
       }
     }
   };
 
+  // Function to close the message component
   const handleCloseMessage = () => {
     setVisible(false);
   };
 
   return (
     <div className="relative font-metropolis h-auto w-[475px] bg-white p-7 flex flex-col rounded-md shadow-lg shadow-indigo-500/40">
+      {/* Display message component */}
       <Message
         message={message}
         isError={isError}
@@ -133,6 +149,7 @@ function Signup({ setLoading }) {
       </div>
 
       <div className="mt-6 space-y-4">
+        {/* Fullname input */}
         <TextField
           fullWidth
           id="outlined-basic"
@@ -148,6 +165,7 @@ function Signup({ setLoading }) {
           <span className={classes.errorText}>{errors.fullname}</span>
         )}
 
+        {/* Mobile number input */}
         <TextField
           fullWidth
           id="outlined-basic"
@@ -163,6 +181,7 @@ function Signup({ setLoading }) {
           <span className={classes.errorText}>{errors.mobile}</span>
         )}
 
+        {/* Email input */}
         <TextField
           fullWidth
           id="outlined-email"
@@ -178,6 +197,7 @@ function Signup({ setLoading }) {
           <span className={classes.errorText}>{errors.email}</span>
         )}
 
+        {/* Password input */}
         <TextField
           fullWidth
           id="outlined-password"
@@ -194,22 +214,13 @@ function Signup({ setLoading }) {
         )}
       </div>
 
+      {/* Signup button */}
       <button
         onClick={handleSignup}
         className="ease-in duration-200 text-center bg-[#00c6ff] rounded-md p-3 mt-5 text-[#ffffff] hover:bg-[#0082fe] shadow-sm shadow-slate-200"
       >
         Signup
       </button>
-
-      {/* <div className="flex items-center tracking-wide mt-4">
-        <p className="text-lg">Forgot Password?</p>
-        <a
-          className="text-[#00c0ff] hover:text-[#0082fe] text-lg ml-2"
-          href="#"
-        >
-          Click here
-        </a>
-      </div> */}
     </div>
   );
 }

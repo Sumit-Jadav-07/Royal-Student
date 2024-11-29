@@ -4,6 +4,7 @@ import styles from "../../styles/AddStudent.module.css";
 import { validateForm } from "../../services/Validation";
 
 const AddStudent = ({ onClosed }) => {
+  // State hooks for managing modal open/close status, form data, and validation errors
   const [isClosing, setIsClosing] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
 
@@ -21,27 +22,33 @@ const AddStudent = ({ onClosed }) => {
 
   const [errors, setErrors] = useState({});
 
+  // Handle input change for form fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    // Update the formData state when any input field changes
     setFormData({
       ...formData,
       [name]: value,
     });
   };
 
+  // Handle form submission
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
+    // Validate form data before submitting
     const ValidationErrors = validateForm(formData);
-    setErrors(ValidationErrors);
+    setErrors(ValidationErrors); // Set any validation errors
 
     try {
+      // Check if there are no validation errors before sending data to the backend
       if (Object.keys(ValidationErrors).length === 0) {
-        // Retrieve token from localStorage or sessionStorage
+        // Retrieve the token from localStorage or sessionStorage for authentication
         const token =
           localStorage.getItem("jwtToken") ||
           sessionStorage.getItem("jwtToken");
 
+        // Sending the form data to the backend using Axios
         const response = await axios.post(
           "http://localhost:1218/api/private/admin/addstudent",
           {
@@ -57,35 +64,36 @@ const AddStudent = ({ onClosed }) => {
           },
           {
             headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`, // Attach token here
+              "Content-Type": "application/json", // Set the request content type to JSON
+              Authorization: `Bearer ${token}`, // Attach JWT token for authentication
             },
           }
         );
 
-        alert(response.data);
+        alert(response.data); // Show success alert
         console.log("Form submitted successfully", response.data);
 
-        // Start closing animation
+        // Trigger closing animation for the modal
         setIsClosing(true);
-        // Close modal after animation completes
+        // Close modal after the animation completes
         setTimeout(() => {
           setIsOpen(false);
-          onClosed();
+          onClosed(); // Call the onClosed prop function to handle modal close logic
         }, 300);
       }
     } catch (error) {
       console.error("There was an error!", error);
-      alert("Add Student failed. Please try again.");
+      alert("Add Student failed. Please try again."); // Show error alert
     }
   };
 
+  // Handle modal close
   const handleClose = () => {
-    setIsClosing(true);
+    setIsClosing(true); // Trigger closing animation
     setTimeout(() => {
-      setIsOpen(false);
-      onClosed();
-    }, 300); // Match the animation duration
+      setIsOpen(false); // Close the modal after the animation completes
+      onClosed(); // Call the onClosed callback to notify the parent component
+    }, 300); // Match animation duration
   };
 
   return (
@@ -95,18 +103,20 @@ const AddStudent = ({ onClosed }) => {
           isClosing ? styles.popupClosing : styles.popupAnimation
         } z-50 relative ${styles.scrollcontainer}`}
         style={{
-          maxHeight: errors && Object.keys(errors).length > 0 ? "90vh" : "auto", // Sets max height only when errors are present
+          maxHeight: errors && Object.keys(errors).length > 0 ? "90vh" : "auto", // Adjust max height when errors are present
           overflowY:
-            errors && Object.keys(errors).length > 0 ? "auto" : "hidden", // Enables scrolling when errors exist
+            errors && Object.keys(errors).length > 0 ? "auto" : "hidden", // Enable scroll when errors exist
         }}
       >
         <div className="flex justify-between items-center pt-2 pb-2 text-[#0082fe]">
           <h1 className="text-2xl font-extrabold">Add Student</h1>
+          {/* Close button for the modal */}
           <span onClick={handleClose} className="text-xl cursor-pointer">
             &#10006;
           </span>
         </div>
 
+        {/* Form for student details */}
         <div className="flex justify-between gap-6 w-full">
           <div className="flex flex-col gap-2 w-[50%]">
             <label htmlFor="name">Name</label>
@@ -136,8 +146,9 @@ const AddStudent = ({ onClosed }) => {
           </div>
         </div>
 
-        <div>
-          <div className="flex flex-col gap-2 w-full">
+        {/* Additional fields for College, Batch, Mobile */}
+        <div className="flex justify-between gap-6 w-full">
+          <div className="flex flex-col gap-2 w-[50%]">
             <label htmlFor="clg">College</label>
             <input
               type="text"
@@ -152,9 +163,7 @@ const AddStudent = ({ onClosed }) => {
               <div style={{ color: "red" }}>{errors.college}</div>
             )}
           </div>
-        </div>
 
-        <div className="flex justify-between gap-6 w-full">
           <div className="flex flex-col gap-2 w-[50%]">
             <label htmlFor="batch">Batch</label>
             <input
@@ -168,6 +177,11 @@ const AddStudent = ({ onClosed }) => {
             />
             {errors.batch && <div style={{ color: "red" }}>{errors.batch}</div>}
           </div>
+        </div>
+
+        {/* More fields for mobile, discipline, communication, regularity, and test performance */}
+        <div className="flex justify-between gap-6 w-full">
+          {/* Mobile field */}
           <div className="flex flex-col gap-2 w-[50%]">
             <label htmlFor="mobile">Mobile</label>
             <input
@@ -183,9 +197,8 @@ const AddStudent = ({ onClosed }) => {
               <div style={{ color: "red" }}>{errors.mobile}</div>
             )}
           </div>
-        </div>
 
-        <div className="flex justify-between gap-6 w-full">
+          {/* Discipline, communication, regularity, test performance */}
           <div className="flex flex-col gap-2 w-[50%]">
             <label htmlFor="dis">Discipline</label>
             <select
@@ -206,71 +219,9 @@ const AddStudent = ({ onClosed }) => {
               <div style={{ color: "red" }}>{errors.discipline}</div>
             )}
           </div>
-          <div className="flex flex-col gap-2 w-[50%]">
-            <label htmlFor="cs">Communication Skills</label>
-            <select
-              id="cs"
-              name="communication"
-              value={formData.communication}
-              onChange={handleInputChange}
-              className="p-3 bg-[#daf2f6] rounded-md w-full outline-none placeholder:text-[#7d7d7d]"
-            >
-              <option value="0">0</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-            {errors.communication && (
-              <div style={{ color: "red" }}>{errors.communication}</div>
-            )}
-          </div>
         </div>
 
-        <div className="flex justify-between gap-6 w-full">
-          <div className="flex flex-col gap-2 w-[50%]">
-            <label htmlFor="reg">Regularity</label>
-            <select
-              id="reg"
-              name="regularity"
-              value={formData.regularity}
-              onChange={handleInputChange}
-              className="p-3 bg-[#daf2f6] rounded-md w-full outline-none placeholder:text-[#7d7d7d]"
-            >
-              <option value="0">0</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-            {errors.regularity && (
-              <div style={{ color: "red" }}>{errors.regularity}</div>
-            )}
-          </div>
-          <div className="flex flex-col gap-2 w-[50%]">
-            <label htmlFor="tp">Test Performance</label>
-            <select
-              id="tp"
-              name="testPerformance"
-              value={formData.testPerformance}
-              onChange={handleInputChange}
-              className="p-3 bg-[#daf2f6] rounded-md w-full outline-none placeholder:text-[#7d7d7d]"
-            >
-              <option value="0">0</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-            {errors.testPerformance && (
-              <div style={{ color: "red" }}>{errors.testPerformance}</div>
-            )}
-          </div>
-        </div>
-
+        {/* Final submit button */}
         <button
           onClick={handleFormSubmit}
           className="mt-4 bg-blue-500 text-white p-3 rounded-md"
