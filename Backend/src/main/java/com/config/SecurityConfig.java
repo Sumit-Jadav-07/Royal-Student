@@ -57,6 +57,7 @@ public class SecurityConfig {
         return new TokenFilter();
     }
 
+    // This method used for encrypt and decrypt passwords
     @Bean
     public BCryptPasswordEncoder getEncoder() {
         return new BCryptPasswordEncoder();
