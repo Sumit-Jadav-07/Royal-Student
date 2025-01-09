@@ -13,19 +13,7 @@ export default {
     },
   },
   plugins: [
-    require("daisyui"),
-    function ({ addUtilities }) {
-      addUtilities({
-        ".scrollbar-hidden": {
-          "-ms-overflow-style": "none" /* For IE and Edge */,
-          "scrollbar-width": "none" /* For Firefox */,
-          /* For Chrome, Safari, and other WebKit browsers */
-          "::-webkit-scrollbar": {
-            display: "none",
-          },
-        },
-      });
-    },
+    
   ],
   daisyui: {
     themes: [],

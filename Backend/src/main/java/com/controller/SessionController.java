@@ -65,20 +65,17 @@ public class SessionController {
             response.put("error", "Email already exists");
             return ResponseEntity.ok(response);
         }
-
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> Login(@RequestBody LoginRequest login) {
         AdminEntity admin = adminService.authenticateAdmin(login.getEmail());
         HashMap<String, Object> response = new HashMap<>();
-
         if (admin != null) {
             if (encoder.matches(login.getPassword(), admin.getPassword())) {
                 String token = jwtService.generateToken(login.getEmail());
                 response.put("message", "Successfully Login");
                 response.put("token", token);
-
                 return ResponseEntity.ok()
                         .header("Authorization", "Bearer " + token)
                         .body(response);

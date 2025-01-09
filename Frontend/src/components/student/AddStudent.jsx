@@ -38,11 +38,12 @@ const AddStudent = ({ onClosed }) => {
 
     // Validate form data before submitting
     const ValidationErrors = validateForm(formData);
+    console.log("Validation Errors:", ValidationErrors);
     setErrors(ValidationErrors); // Set any validation errors
 
     try {
       // Check if there are no validation errors before sending data to the backend
-      if (Object.keys(ValidationErrors).length === 0) {
+      if (Object.keys(ValidationErrors).length === 2) {
         // Retrieve the token from localStorage or sessionStorage for authentication
         const token =
           localStorage.getItem("jwtToken") ||
@@ -117,7 +118,7 @@ const AddStudent = ({ onClosed }) => {
         </div>
 
         {/* Form for student details */}
-        <div className="flex justify-between gap-6 w-full">
+        <div className="flex justify-between w-full gap-6">
           <div className="flex flex-col gap-2 w-[50%]">
             <label htmlFor="name">Name</label>
             <input
@@ -147,7 +148,7 @@ const AddStudent = ({ onClosed }) => {
         </div>
 
         {/* Additional fields for College, Batch, Mobile */}
-        <div className="flex justify-between gap-6 w-full">
+        <div className="flex justify-between w-full gap-6">
           <div className="flex flex-col gap-2 w-[50%]">
             <label htmlFor="clg">College</label>
             <input
@@ -179,10 +180,10 @@ const AddStudent = ({ onClosed }) => {
           </div>
         </div>
 
-        {/* More fields for mobile, discipline, communication, regularity, and test performance */}
-        <div className="flex justify-between gap-6 w-full">
+        {/* Mobile */}
+        <div className="flex justify-between w-full gap-6">
           {/* Mobile field */}
-          <div className="flex flex-col gap-2 w-[50%]">
+          <div className="flex flex-col gap-2 w-[100%]">
             <label htmlFor="mobile">Mobile</label>
             <input
               type="text"
@@ -197,12 +198,80 @@ const AddStudent = ({ onClosed }) => {
               <div style={{ color: "red" }}>{errors.mobile}</div>
             )}
           </div>
+          </div>
 
-          {/* Discipline, communication, regularity, test performance */}
+        <div className="flex justify-between w-full gap-6">
+          {/* Regularitiy, Test Performance*/}
           <div className="flex flex-col gap-2 w-[50%]">
-            <label htmlFor="dis">Discipline</label>
+            <label htmlFor="regularity">Regularity</label>
             <select
-              id="dis"
+              id="regularity"
+              name="regularity"
+              value={formData.regularity}
+              onChange={handleInputChange}
+              className="p-3 bg-[#daf2f6] rounded-md w-full outline-none placeholder:text-[#7d7d7d]"
+            >
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+            {errors.regularity && (
+              <div style={{ color: "red" }}>{errors.regularity}</div>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-2 w-[50%]">
+            <label htmlFor="testPerformance">TestPerformance</label>
+            <select
+              id="testPerformance"
+              name="testPerformance"
+              value={formData.testPerformance}
+              onChange={handleInputChange}
+              className="p-3 bg-[#daf2f6] rounded-md w-full outline-none placeholder:text-[#7d7d7d]"
+            >
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+            {errors.testPerformance && (
+              <div style={{ color: "red" }}>{errors.testPerformance}</div>
+            )}
+          </div>
+          </div>
+
+
+        <div className="flex justify-between w-full gap-6">
+        <div className="flex flex-col gap-2 w-[50%]">
+            <label htmlFor="communication">Communication</label>
+            <select
+              id="communication"
+              name="communication"
+              value={formData.communication}
+              onChange={handleInputChange}
+              className="p-3 bg-[#daf2f6] rounded-md w-full outline-none placeholder:text-[#7d7d7d]"
+            >
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+            {errors.communication && (
+              <div style={{ color: "red" }}>{errors.communication}</div>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-2 w-[50%]">
+            <label htmlFor="discipline">Discipline</label>
+            <select
+              id="discipline"
               name="discipline"
               value={formData.discipline}
               onChange={handleInputChange}
@@ -219,15 +288,16 @@ const AddStudent = ({ onClosed }) => {
               <div style={{ color: "red" }}>{errors.discipline}</div>
             )}
           </div>
-        </div>
 
+          </div>
         {/* Final submit button */}
         <button
-          onClick={handleFormSubmit}
-          className="mt-4 bg-blue-500 text-white p-3 rounded-md"
-        >
-          Submit
+            onClick={(e) => handleFormSubmit(e)} // Ensure correct function binding
+            className="p-3 mt-4 text-white bg-blue-500 rounded-md"
+            >
+            Submit
         </button>
+
       </div>
     </>
   );
