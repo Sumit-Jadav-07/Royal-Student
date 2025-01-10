@@ -11,6 +11,7 @@
 	<groupId>com</groupId>
 	<artifactId>RoyalStudent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+    <packaging>war</packaging>
 	<name>RoyalStudent</name>
 	<description>RoyalStudent Project</description>
 	<url/>
@@ -52,7 +53,7 @@
 			<artifactId>mysql-connector-j</artifactId>
 			<scope>runtime</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
@@ -64,7 +65,7 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-mail</artifactId>
@@ -89,7 +90,7 @@
 				<version>0.11.5</version>
 				<scope>runtime</scope>
 		</dependency>
-		
+
 		<dependency>
     	<groupId>javax.xml.bind</groupId>
     	<artifactId>jaxb-api</artifactId>
@@ -149,7 +150,7 @@
 			<version>2.1.0</version>
 		</dependency>
 
-		
+
 	</dependencies>
 
 	<build>
